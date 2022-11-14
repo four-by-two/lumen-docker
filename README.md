@@ -1,21 +1,5 @@
-<p align="center">
-<img src="https://user-images.githubusercontent.com/4256471/115145753-888d5880-a029-11eb-9d26-37c8638823e7.png" width="400px">
-<br>
-A Laravel API starter kit collection using different structures.
-</p>
 
-![CI](https://github.com/ibrunotome/laravel-api-templates/workflows/CI/badge.svg)
-[![Build Status](https://img.shields.io/github/stars/ibrunotome/laravel-api-templates.svg)](https://github.com/ibrunotome/laravel-api-templates)
-[![Build Status](https://img.shields.io/github/forks/ibrunotome/laravel-api-templates.svg)](https://github.com/ibrunotome/laravel-api-templates)
-[![License](https://img.shields.io/github/license/ibrunotome/laravel-api-templates.svg)](https://github.com/ibrunotome/laravel-api-templates)
 
-<img width="100%" alt="Screen Shot 2020-09-05 at 21 38 49" src="https://user-images.githubusercontent.com/4256471/92316055-02a22d00-efc5-11ea-9eb4-0ee66fdcf76b.png">
-
-<img width="100%" alt="Screen Shot 2020-09-05 at 22 12 44" src="https://user-images.githubusercontent.com/4256471/92316054-00d86980-efc5-11ea-9e54-8346074b03d3.png">
-
-<img width="100%" alt="Screen Shot 2019-05-26 at 11 29 40" src="https://user-images.githubusercontent.com/4256471/88347604-7643ef80-cd21-11ea-8f4b-eecda9a6162d.png">
-
-<img width="100%" alt="Screen Shot 2019-05-26 at 11 24 15" src="https://user-images.githubusercontent.com/4256471/88347704-c3c05c80-cd21-11ea-8ee8-baf05ab87c58.png">
 
 ---------------
 > Not maintained anymore. Today Laravel has almost all these features natively, and I just use the standard skeleton/structure.
