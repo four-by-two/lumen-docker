@@ -14,6 +14,9 @@ use Illuminate\Http\Request;
 |
 
 */
-$router->get('/', function () use ($router) {
-  return 'hello';
+// Auth
+$router->group(['prefix' => 'api'], function () use ($router) {
+$router->post('auth/login', ['as' => 'auth.login', 'uses' => 'AuthController@login']);
+$router->post('auth/register', ['as' => 'auth.register', 'uses' => 'AuthController@register']);
+$router->post('auth/logout', ['as' => 'auth.logout', 'uses' => 'AuthController@logout']);
 });

@@ -26,6 +26,8 @@ class TestingController
 
     }
     public function handle($function, Request $request) {
+
+
         try {
             return $this->$function($request);
         } catch(\Exception $e) {
