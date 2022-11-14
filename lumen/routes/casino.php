@@ -15,6 +15,11 @@ $router->get('g', [
     'as' => 'casino.testingcontroller', 'uses' => '\App\Http\Controllers\Casinodog\Game\SessionsHandler@entrySession'
 ]);
 
+// Available when debug mode is enabled to test method functions fast. {$function_name} should be the name of function in TestingController
+$router->get('testing/{function_name}', [
+    'as' => 'casino.testingcontroller', 'uses' => '\App\Http\Controllers\Casinodog\TestingController@handle'
+]);
+
 // API games routes
 $router->group(['prefix' => 'api/games'], function () use ($router) {
 
@@ -26,10 +31,7 @@ $router->group(['prefix' => 'api/games'], function () use ($router) {
 
     });
 
-    // Available when debug mode is enabled to test method functions fast. {$function_name} should be the name of function in TestingController
-    $router->get('testing/{function_name}', [
-        'as' => 'casino.testingcontroller', 'uses' => '\App\Http\Controllers\Casinodog\TestingController@handle'
-    ]);
+
     
 
 });

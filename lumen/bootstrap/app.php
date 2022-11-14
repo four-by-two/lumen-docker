@@ -22,7 +22,8 @@ date_default_timezone_set(env('APP_TIMEZONE', 'UTC'));
 $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
-
+class_alias('App\Facades\ProxyHelperFacade', 'ProxyHelper');
+$aliases = [UserFacade::class => 'Foo'];
 $app->withFacades();
 
 $app->withEloquent();

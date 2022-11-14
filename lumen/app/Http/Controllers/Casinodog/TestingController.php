@@ -81,7 +81,11 @@ class TestingController
       $decryption = decrypt_string($encryption, $secret_key);
       echo "<i>decrypt_string({$encryption}, {$secret_key})</i>:<br>";
       echo "Result: <b><u>{$decryption}</b></u> <br><br>";
-      
+    }
+
+    public function proxy_request(Request $request)
+    {
+        return \App\Facades\ProxyHelperFacade::CreateProxy($request)->toUrl('https://static-live.hacksawgaming.com/1135/1.34.0/index.html?language=en&channel=desktop&gameid=1135&mode=0&token=97bdbea2-3bfb-43f5-a2e7-04f0d305ca8d&lobbyurl=&env=http://4x2.play-creative.com/api/games/hacksaw/97bdbea2-3bfb-43f5-a2e7-04f0d305ca8d/1135&alwaysredirect=true');
     }
 
     public function createSessionAndRedirectEndpoint(Request $request)

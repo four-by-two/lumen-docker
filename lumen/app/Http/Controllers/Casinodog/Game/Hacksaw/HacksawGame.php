@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Casinodog\Game\Hacksaw;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Wainwright\CasinoDog\Facades\ProxyHelperFacade;
+use App\Facades\ProxyHelperFacade;
 use App\Http\Controllers\Casinodog\Game\GameKernelTrait;
 use Illuminate\Http\Client\ConnectionException;
 use App\Http\Controllers\Casinodog\Game\GameKernel;
@@ -23,7 +23,6 @@ class HacksawGame extends HacksawMain
         $select_session = $this->get_internal_session($internal_token)['data'];
 
         $url = str_replace('games/hacksaw/'.$internal_token.'/'.$select_session['game_id_original'].'/', '', $request->fullUrl());
-        $url = str_replace('02-gameserver.777.dog/api', 'rgs-demo.hacksawgaming.com/api', $url);
         $game_id_origin = $request->segment(4);
         $action = NULL;
         if(str_contains($url, 'authenticate')) {

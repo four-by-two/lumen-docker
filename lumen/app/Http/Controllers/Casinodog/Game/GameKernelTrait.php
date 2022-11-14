@@ -58,7 +58,6 @@ trait GameKernelTrait
         return $kernel->random_uuid();
     }
 
-
     public function request_ip($request)
     {
         $kernel = new GameKernel();
@@ -76,7 +75,6 @@ trait GameKernelTrait
         $kernel = new GameKernel();
         return $kernel->fail_internal_session($token);
     }
-
 
     public function pretendResponseIsFile(string $path, string $contentType)
     {
