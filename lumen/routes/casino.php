@@ -23,15 +23,33 @@ $router->get('testing/{function_name}', [
 // API games routes
 $router->group(['prefix' => 'api/games'], function () use ($router) {
 
+
     // Catch all game API routes and send to the right place
     $router->get('{provider}/{internal_token}/{slug}/{action:.*}', function ($provider, $internal_token, $slug, $action, Request $request) use ($router) {
         $game_controller = config('casinodog.games.'.$provider.'.controller');
         $game_controller_kernel = new $game_controller;
         return $game_controller_kernel->game_event($request);
-
     });
 
+    // Catch all game API routes and send to the right place
+    $router->get('{provider}/{internal_token}/{action:.*}', function ($provider, $internal_token, $action, Request $request) use ($router) {
+        $game_controller = config('casinodog.games.'.$provider.'.controller');
+        $game_controller_kernel = new $game_controller;
+        return $game_controller_kernel->game_event($request);
+    });
 
-    
+    // Catch all game API routes and send to the right place
+    $router->post('{provider}/{internal_token}/{slug}/{action:.*}', function ($provider, $internal_token, $slug, $action, Request $request) use ($router) {
+        $game_controller = config('casinodog.games.'.$provider.'.controller');
+        $game_controller_kernel = new $game_controller;
+        return $game_controller_kernel->game_event($request);
+    });
+
+    // Catch all game API routes and send to the right place
+    $router->post('{provider}/{internal_token}/{action:.*}', function ($provider, $internal_token, $action, Request $request) use ($router) {
+        $game_controller = config('casinodog.games.'.$provider.'.controller');
+        $game_controller_kernel = new $game_controller;
+        return $game_controller_kernel->game_event($request);
+    });
 
 });
