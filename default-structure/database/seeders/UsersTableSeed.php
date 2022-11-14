@@ -7,6 +7,7 @@ use App\Models\LoginHistory;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class UsersTableSeed extends Seeder
 {
@@ -18,7 +19,9 @@ class UsersTableSeed extends Seeder
     public function run()
     {
         $user = User::factory()->create([
-            'email'             => 'test@test.com',
+            'name' => 'casinoman',
+            'email' => 'default@casinoman.app',
+            'password' => Hash::make('casinomanPassword'),
             'email_verified_at' => now(),
         ]);
 

@@ -48,11 +48,17 @@ class RegisterController extends Controller
     protected function registered(Request $request, User $user)
     {
         $this->guard()->logout();
-
+        if($user->email_verified_at === null) {
         $message = __(
             'We sent a confirmation email to :email. Please follow the instructions to complete your registration.',
             ['email' => $user->email]
         );
+
+        } else {
+            $message = __(
+                'Account succesfully registered.'
+            );
+        }
 
         return $this->respondWithCustomData(['message' => $message], Response::HTTP_CREATED);
     }
@@ -105,8 +111,21 @@ class RegisterController extends Controller
             'email_token_disable_account' => Uuid::uuid4()->toString(),
             'password'                    => bcrypt($data['password']),
             'is_active'                   => 1,
+            'email_verified_at'           => now(),
+            'locale'                      => $data['locale'] ?? 'en_US',
+        ]);
+
+        /* (user without permissions:)
+        return $this->userRepository->store([
+            'email'                       => $data['email'],
+            'name'                        => $data['name'],
+            'email_token_confirmation'    => Uuid::uuid4()->toString(),
+            'email_token_disable_account' => Uuid::uuid4()->toString(),
+            'password'                    => bcrypt($data['password']),
+            'is_active'                   => 1,
             'email_verified_at'           => null,
             'locale'                      => $data['locale'] ?? 'pt_BR',
         ]);
+        */
     }
 }

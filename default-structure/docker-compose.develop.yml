@@ -21,6 +21,7 @@ services:
     command: /usr/local/sbin/php-fpm
     container_name: default-structure-app
     restart: always
+    user: $DOCKER_USER
     ports:
       - 9000:9000
     environment:

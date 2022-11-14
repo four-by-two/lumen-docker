@@ -43,13 +43,13 @@ Route::group(['middleware' => 'guest'], function () {
     Route::post('register', [RegisterController::class, 'register'])
         ->name('api.auth.register');
 
-    Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])
-        ->middleware('throttle:hard')
-        ->name('api.reset.email-link');
+    //Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])
+    //    ->middleware('throttle:hard')
+    //    ->name('api.reset.email-link');
 
-    Route::post('password/reset', [ResetPasswordController::class, 'reset'])
-        ->middleware('throttle:hard')
-        ->name('api.reset.password');
+    //Route::post('password/reset', [ResetPasswordController::class, 'reset'])
+    //    ->middleware('throttle:hard')
+    //    ->name('api.reset.password');
 });
 
 ###################
@@ -60,11 +60,11 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('logout', [LoginController::class, 'logout'])
         ->name('api.auth.logout');
 
-    Route::post('generate2faSecret', [TwoFactorAuthenticationController::class, 'generate2faSecret'])
-        ->name('api.generate2faSecret');
+    //Route::post('generate2faSecret', [TwoFactorAuthenticationController::class, 'generate2faSecret'])
+    //    ->name('api.generate2faSecret');
 
-    Route::post('enable2fa', [TwoFactorAuthenticationController::class, 'enable2fa'])
-        ->name('api.enable2fa');
+    //Route::post('enable2fa', [TwoFactorAuthenticationController::class, 'enable2fa'])
+    //    ->name('api.enable2fa');
 });
 
 ###################
@@ -106,20 +106,20 @@ Route::group([
     Route::patch('password/update', [UserController::class, 'updatePassword'])
         ->name('api.password.update');
 
-    Route::patch('notifications/visualize-all', [NotificationController::class, 'visualizeAllNotifications'])
-        ->name('api.notifications.visualize-all');
+    //Route::patch('notifications/visualize-all', [NotificationController::class, 'visualizeAllNotifications'])
+    //    ->name('api.notifications.visualize-all');
 
-    Route::patch('notifications/{id}/visualize', [NotificationController::class, 'visualizeNotification'])
-        ->name('api.notifications.visualize');
+    //Route::patch('notifications/{id}/visualize', [NotificationController::class, 'visualizeNotification'])
+    //    ->name('api.notifications.visualize');
 
-    Route::delete('devices/{id}', [AuthorizeDeviceController::class, 'destroy'])
-        ->middleware('throttle:hard')
-        ->name('api.device.destroy');
+    //Route::delete('devices/{id}', [AuthorizeDeviceController::class, 'destroy'])
+    //    ->middleware('throttle:hard')
+    //    ->name('api.device.destroy');
 });
 
 Route::get('ping', [UtilController::class, 'serverTime'])
     ->name('api.server.ping');
 
-Route::post('/account/disable/{token}', [DisableAccountController::class, 'disable'])
-    ->middleware(['throttle:hard'])
-    ->name('api.account.disable');
+//Route::post('/account/disable/{token}', [DisableAccountController::class, 'disable'])
+//    ->middleware(['throttle:hard'])
+//    ->name('api.account.disable');
