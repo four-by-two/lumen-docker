@@ -35,9 +35,8 @@ services:
     depends_on:
       - pgsql
       - redis
-
   schedule:
-    image: ibrunotome/php:8.0
+    image: php:8.1-fpm
     container_name: default-structure-schedule
     restart: always
     command:
@@ -56,9 +55,8 @@ services:
     depends_on:
       - pgsql
       - redis
-
   queue:
-    image: ibrunotome/php:8.0
+    image: php:8.1-fpm
     container_name: default-structure-queue
     restart: always
     command: php artisan queue:work
@@ -72,7 +70,6 @@ services:
     depends_on:
       - pgsql
       - redis
-
   pgsql:
     image: launcher.gcr.io/google/postgresql13
     container_name: default-structure-pgsql
@@ -84,16 +81,12 @@ services:
       POSTGRES_PASSWORD: default
     volumes:
       - pg-data:/var/lib/postgresql/data
-
   redis:
     image: library/redis:6.0.10-alpine
     container_name: default-structure-redis
     restart: always
-    ports:
-      - 6379:6379
     volumes:
       - redis-data:/data
-      
 volumes:
   pg-data:
   redis-data:

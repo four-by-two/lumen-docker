@@ -1,9 +1,0 @@
-apiVersion: networking.gke.io/v1beta1
-kind: ManagedCertificate
-metadata:
-  name: laravelapitemplates-com-br
-  namespace: laravelapitemplates
-spec:
-  domains:
-    - laravelapitemplates.com.br
-    - www.laravelapitemplates.com.br
