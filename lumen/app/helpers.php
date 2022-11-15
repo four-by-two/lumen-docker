@@ -125,3 +125,21 @@ function in_between($a, $b, $data)
 }
 }
 
+if (!function_exists('gameclass')) {
+    function gameclass($provider)
+    {
+        try {
+        $game_controller = config('casinodog.games.'.$provider.'.controller');
+        if($game_controller === NULL) {
+            save_log('gameclass error', $e->getMessage());
+            abort(400, 'Error gamecontroller.');
+        }
+        $game_controller_kernel = new $game_controller;
+        return $game_controller_kernel;
+        } catch(\Exception $e) {
+            save_log('gameclass error', $e->getMessage());
+            abort(400, $e->getMessage());
+        }
+
+    }
+}

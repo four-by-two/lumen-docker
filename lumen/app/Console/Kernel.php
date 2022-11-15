@@ -13,7 +13,9 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        \App\Console\Commands\ImportGameslistToDatabase::class
+        \App\Console\Commands\ImportGameslistToDatabase::class,
+        \App\Console\Commands\CreateKeys::class
+
     ];
 
     /**

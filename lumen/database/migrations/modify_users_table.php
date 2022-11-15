@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function ($table) {
-            $table->string('is_admin', 1)->default('0')->after('name');
+            $table->boolean('is_admin')->default(0)->after('name');
         });
     }
     /**

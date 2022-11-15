@@ -29,6 +29,11 @@ class GameRespinTemplate extends Eloquent  {
         'updated_at' => 'datetime',
     ];
 
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
+    
     public static function save_game_template($gid, $game_data, $game_type)
     {   
         if($game_type === 'normal') {

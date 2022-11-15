@@ -18,6 +18,10 @@ trait GameKernelTrait
         return $kernel->get_internal_session($token);
     }
 
+    public function get_parent_session(string $token) {
+        $this->get_internal_session($token);
+    }
+
     public function find_previous_active_session(string $token) {
         $kernel = new GameKernel();
         return $kernel->find_previous_active_session($token);

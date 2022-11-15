@@ -17,14 +17,14 @@ class ImportGameslistToDatabase extends Command
      *
      * @var string
      */
-    protected $signature = 'casinodog:retrieve-default-gameslist {gameprovider?} {after=unset : Action to do after retrieving games (nothing, upsert, update, truncate+insert)?} {--save_to_db} {--truncate_current_db}';
+    protected $signature = 'casinodog:restore-default-gameslist {gameprovider?} {after=unset : Action to do after retrieving games (nothing, upsert, update, truncate+insert)?} {--save_to_db} {--truncate_current_db}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Restore gameslist from game provider using local storage.';
 
     /**
      * Create a new command instance.
@@ -146,11 +146,7 @@ class ImportGameslistToDatabase extends Command
     public function retrieve($gameprovider)
     {
         // select gameprovider's main controller, from config
-        $gameslist = Gameslist::all()->where('provider', $gameprovider);
-        $game_controller = config('casinodog.games.'.$gameprovider.'.controller');
-        $game_controller_kernel = new $game_controller;
-        
-        $store_payload = $game_controller_kernel->default_gamelist("retrieve");
+        $store_payload = gameclass($gameprovider)->default_gamelist("retrieve");
 
         $this->line('');
         isset($store_payload['message']) ? $this->line($store_payload['message']) : $this->error($store_payload['error']);

@@ -4,6 +4,7 @@ namespace Wainwright\CasinoDog\Models;
 
 use \Illuminate\Database\Eloquent\Model as Eloquent;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class OperatorAccess extends Eloquent  {
     protected $table = 'wainwright_operator_access';
@@ -25,15 +26,11 @@ class OperatorAccess extends Eloquent  {
      */
     protected $casts = [
         'created_at' => 'datetime:Y-m-d H:i:s',
-        'last_used_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
-
 
     public function user()
     {
         return $this->belongsTo('App\Models\User', 'ownedBy');
     }
-
-
 }

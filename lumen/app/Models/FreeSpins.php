@@ -34,6 +34,11 @@ class FreeSpins extends Eloquent  {
         'updated_at' => 'datetime',
     ];
 
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
     public function add_freespins(Request $request)
     {
         $player_id = hash_hmac('md5', $request->currency.'*'.$request->player, $request->operator_key);

@@ -21,6 +21,12 @@ class DataLogger extends Eloquent  {
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
     public static function log_count() {
         $value = Cache::remember('datalogger:log_count', 150, function () {
             return Datalogger::count();

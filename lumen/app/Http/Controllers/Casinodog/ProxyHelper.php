@@ -37,37 +37,24 @@ class ProxyHelper {
         $this->useDefaultHeaders = $useDefaultHeaders;
         return $this;
     }
-
     public function withHeaders($headers){ $this->headers = $headers; return $this; }
-
     public function withBasicAuth($user, $secret){ $this->authorization = ['type' => 'basic', 'user' => $user, 'secret' => $secret ]; return $this; }
-
     public function withDigestAuth($user, $secret){ $this->authorization = ['type' => 'digest', 'user' => $user, 'secret' => $secret ]; return $this; }
-
     public function withToken($token){ $this->authorization = ['type' => 'token', 'token' => $token ]; return $this; }
-
     public function withMethod($method = 'POST'){ $this->customMethod = $method; return $this; }
-
     public function preserveQuery($preserve){ $this->addQuery = $preserve; return $this; }
-
     public function getResponse($url){
-
         $info = $this->getRequestInfo();
-
         $http = $this->createHttp($info['type']);
         $http = $this->setAuth($http, $info['token']);
         $http = $this->setHeaders($http);
-
         if($this->addQuery && $info['query'])
             $url = $url.'?'.http_build_query($info['query']);
-
         $response = $this->call($http, $info['method'], $url, $this->getParams($info));
-
         return response($this->isJson($response) ? $response->json() : $response->body(), $response->status());
     }
 
     public function toUrl($url){ return $this->getResponse($url); }
-
     public function toHost($host, $proxyController){
         return $this->getResponse($host.str_replace($proxyController, '', $this->originalRequest->path()));
     }

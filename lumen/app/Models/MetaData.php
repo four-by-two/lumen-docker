@@ -22,6 +22,11 @@ class MetaData extends Eloquent  {
         'updated_at' => 'datetime',
     ];
 
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
     public static function retrieve_extended_game($gid)
     {
         $find = MetaData::where('key', $gid)->first();

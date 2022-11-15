@@ -3,7 +3,8 @@
     "php81",
     "php81Packages.composer",
     "shell-nginx",
-    "nginx"
+    "nginx",
+    "nodejs"
   ],
   "shell": {
     "init_hook": null

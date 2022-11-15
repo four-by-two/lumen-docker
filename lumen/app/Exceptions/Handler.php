@@ -63,7 +63,9 @@ class Handler extends ExceptionHandler
         if($status === 404) {
             $message = 'Resource not found.';
         }
-
+        if($status === 405) {
+            $message = 'Not allowed method.';
+        }
         if($status === 419) {
             $message = 'You should re-authenticate.';
         }
@@ -72,6 +74,7 @@ class Handler extends ExceptionHandler
             if($status !== 422) {
               $dd = explode('/', $e->getFile());
               return response()->json([
+                      'status' => 'error',
                       'code' => (int) $status,
                       'message' => $message,
                       'location' => end($dd),
@@ -81,12 +84,14 @@ class Handler extends ExceptionHandler
         }
 
         return response()->json([
+                'status' => 'error',
                 'code' => (int) $status,
                 'message' => $message,
         ], $status);
 
         } catch(\Exception $error_errorred) {
             return response()->json([
+                    'status' => 'error',
                     'code' => (int) 500,
                     'message' => 'Exception handler itself actually errored with message: '.$error_errorred->getMessage(),
             ], 500);

@@ -10,7 +10,7 @@ class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['register', 'login', 'refresh', 'logout']]);
+        $this->middleware('auth:api', ['except' => ['register', 'login', 'logout']]);
     }
     /**
      * Get a JWT via given credentials.
@@ -28,7 +28,7 @@ class AuthController extends Controller
         $credentials = $request->only(['email', 'password']);
 
         if (! $token = Auth::attempt($credentials)) {
-            return response()->json(['code' => 401, 'message' => 'Incorrect or non-existing credentials entered.'], 401);
+            return response()->json(['status' => 'error', 'code' => 401, 'message' => 'Incorrect or non-existing credentials entered.'], 401);
         }
 
         return $this->respondWithToken($token);
@@ -52,7 +52,7 @@ class AuthController extends Controller
     public function logout()
     {
         auth()->logout();
-        return response()->json(['code' => 200, 'message' => 'Successfully logged out.'], 200);
+        return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Successfully logged out.'], 200);
     }
 
     /**
@@ -62,11 +62,14 @@ class AuthController extends Controller
      */
      public function register(Request $request)
     {
+      if(User::count() > 0) {
+         abort(500, "Registration is closed for new registrations. You can re-run the database seed if you need to generate another account.");
+      }
+
       $this->validate($request, [
           'email' => 'required|email|unique:users|min:1|max:255',
           'password' => 'required|string|min:8|max:255',
       ]);
-
       try {
           $user = new User;
           $user->name = $request->input('email');
@@ -75,9 +78,9 @@ class AuthController extends Controller
           $user->password = app('hash')->make($plainPassword);
           $user->save();
 
-          return response()->json(['code' => 200, 'message' => 'Created user.'], 200);
+          return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Created user.'], 200);
       } catch (\Exception $e) {
-          return response()->json(['code' => 409, 'message' => 'Registration failed.'], 409);
+          return response()->json(['status' => 'success', 'code' => 409, 'message' => 'Registration failed.'], 409);
       }
     }
 

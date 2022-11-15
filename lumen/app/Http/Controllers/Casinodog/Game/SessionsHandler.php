@@ -51,7 +51,7 @@ class SessionsHandler extends GameKernel
         if($verify_signature === false) {
            abort(403, 'Entry signature invalid, create new session.');
         }
-        if($select_session['data']['expired_bool'] === 1) {
+        if($select_session['data']['active'] === 0) {
            abort(400, 'Session expired, create new session.');
         }
         $session_state_update = SessionsHandler::sessionUpdate($request->token, 'state', 'SESSION_ENTRY');
@@ -109,7 +109,7 @@ class SessionsHandler extends GameKernel
     {
         try {
             SessionsHandler::sessionUpdate($token, 'state', 'SESSION_FAILED');
-            SessionsHandler::sessionUpdate($token, 'expired_bool', 1);
+            SessionsHandler::sessionUpdate($token, 'active', 0);
             Cache::pull($token);
         } catch (\Exception $exception) {
             save_log('SessionsHandler()', 'Error trying to invalidate session at sessionFailed(). Token:'.$token);
@@ -120,7 +120,7 @@ class SessionsHandler extends GameKernel
     {
         try {
             SessionsHandler::sessionUpdate($token, 'state', 'SESSION_EXPIRED');
-            SessionsHandler::sessionUpdate($token, 'expired_bool', 1);
+            SessionsHandler::sessionUpdate($token, 'active', 0);
             Cache::pull($token);
         } catch (\Exception $exception) {
            save_log('Error trying to expire session at sessionExpired(). Token:'.$token, json_encode($exception));
@@ -156,7 +156,6 @@ class SessionsHandler extends GameKernel
             'launcher_behaviour' => config('casinodog.games.'.$select_game->provider.'.launcher_behaviour'),
             'mode' => $game_mode,
         ];
-        $token_generation = Str::orderedUuid();
 
         $player_id = hash_hmac('md5', $currency.'*'.$player_operator_id, $operator_key);
         $invalidate_previous_init = self::invalidatePrev($player_operator_id, $operator_key);
@@ -173,18 +172,19 @@ class SessionsHandler extends GameKernel
             'game_provider' => $select_game->provider,
             'extra_meta' => json_encode($extra_meta),
             'user_agent' => '[]',
-            'token_internal' => $token_generation,
             'currency' => $currency,
             'game_id_original' => $select_game->gid,
             'token_original' => 0,
             'token_original_bridge' => 0,
-            'expired_bool' => 0,
+            'active' => 1,
             'state' => 'SESSION_INIT',
             'created_at' => now(),
             'updated_at' => now(),
         );
 
-        $insert = ParentSessions::insert($prepend_session_object);
+        $insert = ParentSessions::create($prepend_session_object);
+        $token_generation = $insert->id;
+
         $store_in_cache = Cache::put($token_generation, $prepend_session_object, now()->addMinutes(60)); //storing session in cache however still use fallover on db, memcached is preferred for game handling under high load, see OPTIMIZATIONS.MD
         $entry_signature = generate_sign($token_generation);
         $session_url = env('APP_URL').'/g?token='.$token_generation.'&entry='.$entry_signature.'&player_id='.$player_operator_id;
@@ -206,7 +206,7 @@ class SessionsHandler extends GameKernel
         $prepareResponse = array(
             'status' => 'success',
             'message' => array(
-                'data' => $prepend_session_object,
+                'data' => $insert,
                 'session_url' => $session_url,
                 'fake_iframe_url' => $fake_url
             ),
@@ -219,11 +219,11 @@ class SessionsHandler extends GameKernel
     {
         try {
             ParentSessions::where('player_id', $player)
-            ->where('expired_bool', 0)
+            ->where('active', 1)
             ->where('state', 'SESSION_INIT')
             ->update([
                'state' => 'SESSION_OVERRULE_INVALIDATION',
-               'expired_bool' => 1,
+               'active' => 1,
             ]);
         } catch (\Exception $exception) {
             Log::critical('Error trying to invalidate older sessions, this should never error. Investigate:'.$exception);
@@ -232,12 +232,12 @@ class SessionsHandler extends GameKernel
          return true;
     }
 
-    public static function sessionFindPreviousActive($player_id, $token_internal, $game_id_original)
+    public static function sessionFindPreviousActive($player_id, $session_id, $game_id_original)
     {
         $find = ParentSessions::where('player_id', $player_id)
             ->where('game_id_original', $game_id_original)
-            ->where('expired_bool', 0)
-            ->where('token_original', '!=', 0)
+            ->where('active', 1)
+            ->where('id', '!=', 0)
             ->first();
         if(!$find) {
             return false;
@@ -246,15 +246,15 @@ class SessionsHandler extends GameKernel
         }
     }
 
-    public static function sessionData($token_internal)
+    public static function sessionData($session_id)
     {
-        $retrieve_session_from_cache = Cache::get($token_internal);
+        $retrieve_session_from_cache = Cache::get($session_id);
         if ($retrieve_session_from_cache) {
             $response_data = array('data_retrieval_method' => 'cache', 'data' => $retrieve_session_from_cache);
         } elseif(!$retrieve_session_from_cache) {
-            $retrieve_session_from_database = ParentSessions::where('token_internal', $token_internal)->first();
+            $retrieve_session_from_database = ParentSessions::where('id', $session_id)->first();
             if($retrieve_session_from_database) {
-                $store_in_cache = Cache::put($token_internal, $retrieve_session_from_database, now()->addMinutes(60)); //storing session in cache however still use fallover on db, memcached is preferred for game handling under high load, see OPTIMIZATIONS.MD
+                $store_in_cache = Cache::put($session_id, $retrieve_session_from_database, now()->addMinutes(60)); //storing session in cache however still use fallover on db, memcached is preferred for game handling under high load, see OPTIMIZATIONS.MD
                 $response_data = array('data_retrieval_method' => 'database', 'data' => $retrieve_session_from_database);
             }
         } else {
@@ -263,9 +263,9 @@ class SessionsHandler extends GameKernel
         return $response_data ?? false;
     }
 
-    public static function sessionUpdate($token_internal, $key, $newValue)
+    public static function sessionUpdate($session_id, $key, $newValue)
     {
-        $retrieve_session_from_database = ParentSessions::where('token_internal', $token_internal)->first();
+        $retrieve_session_from_database = ParentSessions::where('id', $id)->first();
 
         if(!$retrieve_session_from_database) {
             //Session not found
@@ -276,14 +276,14 @@ class SessionsHandler extends GameKernel
                 $key => $newValue
             ]);
         } catch (\Exception $exception) {
-            Log::critical('Database error, most likely you are trying to update a non existing key/field, or cache is mismatched (token: '.$token_internal.') - clearing this key. Investigate asap. Error: '.json_encode($exception));
-            Cache::pull($token_internal);
+            save_log('SessionsHandler', 'Database error, most likely you are trying to update a non existing key/field, or cache is mismatched (session_id: '.$token_internal.') - clearing this key. Investigate asap. Error: '.json_encode($exception));
+            Cache::pull($session_id);
             return false;
         }
         $data = $retrieve_session_from_database;
         $data[$key] = $newValue;
 
-        $store_in_cache = Cache::put($token_internal, $data, now()->addMinutes(120));
+        $store_in_cache = Cache::put($session_id, $data, now()->addMinutes(120));
         return $data;
     }
 
